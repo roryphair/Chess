@@ -68,10 +68,12 @@ class Cursor
       highlighted_moves.each_with_index {|ele, idx| print("#{idx} :  #{ele}  ")}
       input = gets.chomp
       if input == 'no'
+        @end_message = ''
         @highlighted_moves = []
         @select = false
         return false
       else 
+        @end_message = ''
         @select = false
         board.move_piece(color, cursor_pos, highlighted_moves[input.to_i])
         @highlighted_moves = []
@@ -84,8 +86,13 @@ class Cursor
 
   def select_piece(color)
     if @board[cursor_pos].color == color
-      @select = true
-      return true
+      if @board[cursor_pos].valid_moves.empty?
+        @end_message = 'No moves for that piece sir'
+      else
+        @end_message = @board[cursor_pos].class.name + ' selected'
+        @select = true
+        return true
+      end
     end
     false
   end
@@ -154,7 +161,7 @@ class Cursor
     cursor_pos
   end
 
-  def render(endtext = '')
+  def render()
     system("clear")
     puts
     print('      ')
@@ -179,7 +186,7 @@ class Cursor
     elsif board.in_check?(:black)
       puts 'WARNING BLACK IS IN CHECK'
     end
-    puts endtext
+    puts @end_message
     puts
   end
 
